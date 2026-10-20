@@ -1,4 +1,4 @@
-const NN_ROOT = document.querySelector('.nn');
+const SITE_ROOT = document.querySelector('.mn');
 
 (function(){
   /* amplitude: some letters sit short or ride high, like hand set wood type */
@@ -39,7 +39,7 @@ const NN_ROOT = document.querySelector('.nn');
      so it starts on the first one (unless the visitor has turned it off) and loops without a seam */
   (function music(){
     const btn = document.getElementById("sound"), label = btn.querySelector(".sound-label");
-    const SRC = "/sites/nesilnoble/audio/interactive-playground.mp3", VOL = 0.45;
+    const SRC = "/home/audio/interactive-playground.mp3", VOL = 0.45;
     /* 1st choice: stream it, so it starts after the first few kilobytes.
        If the stream has not actually started moving within a couple of seconds (some browsers
        are strict about how streamed audio is served), switch to decoding the file with Web Audio. */
@@ -127,7 +127,7 @@ const NN_ROOT = document.querySelector('.nn');
 
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (reduce || !window.gsap) {
-    NN_ROOT.classList.add("rm");
+    SITE_ROOT.classList.add("rm");
     const map = { work: "work", about: "about", contact: "contact" };
     document.querySelectorAll("[data-go]").forEach(btn => btn.addEventListener("click", () => {
       const el = document.getElementById(map[btn.dataset.go] || btn.dataset.go);
@@ -596,7 +596,7 @@ const NN_ROOT = document.querySelector('.nn');
       watchFrame();
     }
     cs.classList.add("open");
-    NN_ROOT.classList.add("cs-lock");
+    SITE_ROOT.classList.add("cs-lock");
     window.__lenis?.stop();
     /* sandboxed previews can refuse history changes; the viewer still works, just without a link of its own */
     if (!fromHistory){ try { history.pushState({ cs: card.dataset.case }, "", hashOf(card)); pushed = true; } catch (_) { pushed = false; } }
@@ -605,7 +605,7 @@ const NN_ROOT = document.querySelector('.nn');
   function close(){
     if (!cs.classList.contains("open")) return;
     cs.classList.remove("open");
-    NN_ROOT.classList.remove("cs-lock");
+    SITE_ROOT.classList.remove("cs-lock");
     window.__lenis?.start();
     opener?.focus({ preventScroll: true });
   }

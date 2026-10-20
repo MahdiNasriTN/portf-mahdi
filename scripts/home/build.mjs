@@ -3,9 +3,9 @@ import fs from "node:fs";
 import postcss from "postcss";
 import { applyProfile } from "./profile.mjs";
 
-const src = fs.readFileSync("docs/research/nesilnoble/source-original.html", "utf8");
-const pub = "public/sites/nesilnoble";
-const BASE = "/sites/nesilnoble/";
+const src = fs.readFileSync("docs/research/home/source-original.html", "utf8");
+const pub = "public/home";
+const BASE = "/home/";
 fs.mkdirSync(`${pub}/fonts`, { recursive: true });
 
 // style
@@ -21,20 +21,20 @@ const cssNoFonts = css.replace(/url\(data:font\/woff2;base64,([A-Za-z0-9+/=]+)\)
 const root = postcss.parse(cssNoFonts);
 const scope = (sel) => {
   sel = sel.trim();
-  if (sel === ":root" || sel === "html,body" || sel === "body") return ".nn";
-  if (sel === "html") return ".nn";
-  if (sel === "*") return ".nn, .nn *";
-  if (sel.startsWith("html.")) return ".nn." + sel.slice(5);
-  if (sel === "html,body") return ".nn";
-  return ".nn " + sel;
+  if (sel === ":root" || sel === "html,body" || sel === "body") return ".mn";
+  if (sel === "html") return ".mn";
+  if (sel === "*") return ".mn, .mn *";
+  if (sel.startsWith("html.")) return ".mn." + sel.slice(5);
+  if (sel === "html,body") return ".mn";
+  return ".mn " + sel;
 };
 root.walkRules((rule) => {
   if (rule.parent && rule.parent.type === "atrule" && /keyframes/.test(rule.parent.name)) return;
   rule.selectors = rule.selectors.flatMap((s) => scope(s).split(",").map((x) => x.trim()));
 });
-// html,body{...} splits into html + body selectors both -> .nn (dedupe)
+// html,body{...} splits into html + body selectors both -> .mn (dedupe)
 root.walkRules((rule) => { rule.selectors = [...new Set(rule.selectors)]; });
-fs.writeFileSync("src/app/nesilnoble/nesilnoble.css", root.toString());
+fs.writeFileSync("src/app/home.css", root.toString());
 
 // markup (body without scripts)
 let body = src.match(/<body>([\s\S]*)<\/body>/)[1];
@@ -66,7 +66,7 @@ body = body
   .replace(/<a href="https:\/\/www\.linkedin\.com\/in\/[^>]*>LinkedIn<\/a>\s*<a href="https:\/\/www\.behance[^>]*>Behance<\/a>\s*<a href="[^"]*resume[^>]*>Resume<\/a>/, "")
   .replace(/<div class="more" id="more">[\s\S]*?<\/div>/, "")
   .replace(/<div><dt>Now<\/dt>[\s\S]*?<\/dl>/, "<div><dt>Now</dt><dd>Software Engineer</dd></div>\n        </dl>")
-  .replaceAll("nesilkunnappally@gmail.com", "mahdi.nasri@zeta-box.com")
+  .replaceAll("nesilkunnappally@gmail.com", "mahdi.nasri123@gmail.com")
   .replace("Hi, I'm Nesil.", "Hi, I'm Mahdi.")
   .replace('<span>Nesil</span> <span>Noble</span>', "<span>Mahdi</span> <span>Nasri</span>")
   .replace(">Nesil Noble</span>", ">Mahdi Nasri</span>")
@@ -77,8 +77,8 @@ body = body
 
 body = applyProfile(body);
 fs.writeFileSync(
-  "src/components/sites/nesilnoble/markup.ts",
-  "// Generated from the original page body by scripts/nesilnoble/build.mjs\nexport const nnMarkup = " + JSON.stringify(body.trim()) + ";\n"
+  "src/components/home/markup.ts",
+  "// Generated from the original page body by scripts/home/build.mjs\nexport const siteMarkup = " + JSON.stringify(body.trim()) + ";\n"
 );
 
 // scripts
@@ -89,8 +89,8 @@ fs.writeFileSync(`${pub}/vendor/lenis.js`, lenis);
 const patch = (s) =>
   s
     .replaceAll('"audio/interactive-playground.mp3"', `"${BASE}audio/interactive-playground.mp3"`)
-    .replaceAll("document.documentElement.classList", "NN_ROOT.classList")
+    .replaceAll("document.documentElement.classList", "SITE_ROOT.classList")
     .replaceAll('"Nesil"', '"Mahdi"')
     .replaceAll('"Bengaluru"', '"Sfax"');
-fs.writeFileSync(`${pub}/journey.js`, "const NN_ROOT = document.querySelector('.nn');\n" + patch(journey) + "\n" + patch(overlay));
+fs.writeFileSync(`${pub}/journey.js`, "const SITE_ROOT = document.querySelector('.mn');\n" + patch(journey) + "\n" + patch(overlay));
 console.log("ok", fi, "fonts;", scripts.length, "scripts");
